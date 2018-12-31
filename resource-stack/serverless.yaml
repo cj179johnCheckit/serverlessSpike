@@ -1,0 +1,72 @@
+service: checkit-serverless-spike-resources
+
+package:
+  exclude:
+    - node_modules/**
+    - .git/**
+
+provider:
+  name: aws
+  timeout: 30
+  memorySize: 512
+  region: 'eu-west-1'
+  stage: ${opt:stage, 'dev'}
+  profile: ${opt:profile, 'serverless'}
+  runtime: nodejs8.10
+  deploymentBucket:
+    name: ${self:service}-deployment
+
+custom:
+  policy:
+    dev: 'Delete'
+    prod: 'Retain'
+
+resources:
+  Resources:
+    HubConnectionsTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: ${self:custom.policy.${self:provider.stage}}
+      Properties:
+        TableName: ${self:service}-hub-connections
+        AttributeDefinitions:
+          - AttributeName: Environment
+            AttributeType: S
+        KeySchema:
+          - AttributeName: Environment
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+
+    IotEventCountsTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: ${self:custom.policy.${self:provider.stage}}
+      Properties:
+        TableName: ${self:service}-iot-event-counts
+        AttributeDefinitions:
+          - AttributeName: Environment_CustomerId_EventType
+            AttributeType: S
+        KeySchema:
+          - AttributeName: Environment_CustomerId_EventType
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+
+  Outputs:
+    HubConnectionsTable:
+      Description: hub connection table
+      Value:
+        Fn::GetAtt:
+          - HubConnectionsTable
+          - Arn
+      Export:
+        Name: ${self:service}-HubConnectionsTable
+    IotEventCountsTable:
+      Description: IOT event counts table
+      Value:
+        Fn::GetAtt:
+          - IotEventCountsTable
+          - Arn
+      Export:
+        Name: ${self:service}-IotEventCountsTable
