@@ -1,0 +1,80 @@
+service: checkit-serverless-spike
+
+package:
+  exclude:
+    - node_modules/**
+    - .git/**
+    - resource-stack/**
+
+provider:
+  name: aws
+  timeout: 30
+  memorySize: 512
+  region: 'eu-west-1'
+  stage: ${opt:stage, 'dev'}
+  profile: ${opt:profile, 'serverless'}
+  runtime: nodejs8.10
+  deploymentBucket:
+    name: ${self:service}-deployment
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:BatchWriteItem
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DescribeStream
+        - dynamodb:GetRecords
+        - dynamodb:GetShardIterator
+        - dynamodb:ListStreams
+      Resource: arn:aws:dynamodb:eu-west-1:051643391380:table/hub-connections
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:DescribeStream
+        - dynamodb:GetRecords
+        - dynamodb:ListStreams
+      Resource: arn:aws:dynamodb:eu-west-1:051643391380:table/iot-event-counts
+
+
+custom:
+  functionPrefix: ${self:service}
+  resourceStack: ${self:service}-resources-${self:provider.stage}
+
+functions:
+  helloWorld:
+    handler: src/functions/demo/helloWorld.greet
+    name: ${self:custom.functionPrefix}-helloWorld
+    timeout: 10
+    memorySize: 128
+
+  showMyName:
+    handler: src/functions/demo/showMyName.show
+    name: ${self:custom.functionPrefix}-showMyName
+
+  connection:
+    handler: src/functions/hub/connection.handler
+    name: ${self:custom.functionPrefix}-hub-connection
+    package:
+      include:
+        - src/functions/shared/node_modules
+    resources:
+      Resources:
+       HubConnectionsTable:
+        Type: AWS::DynamoDB::Table
+        Arn: ${cf:${self:custom.resourceStack}.HubConnectionsTable}
+
+  eventCounts:
+    handler: src/functions/hub/event-counts.handler
+    name: ${self:custom.functionPrefix}-hub-eventCounts
+    package:
+      include
+        - src/functions/shared/node_modules
+    resources:
+      Resources:
+       HubConnectionsTable:
+        Type: AWS::DynamoDB::Table
+        Arn: ${cf:${self:custom.resourceStack}.IotEventCountsTable}
