@@ -1,14 +1,22 @@
+# prefix of stack name
 service: checkit-serverless-spike
 
+# choose files in the package pushed to cloud
 package:
+  # package each function individually
+  individually: true
   exclude:
     - node_modules/**
     - .git/**
     - resource-stack/**
+    - .vscode/**
+    - test-data/**
 
+# serverless plugins
 plugins:
   - serverless-iam-roles-per-function
 
+# cloud service provider configuration
 provider:
   name: aws
   timeout: 30
@@ -20,27 +28,48 @@ provider:
   deploymentBucket:
     name: ${self:service}-deployment
 
+# project customised settings
 custom:
   functionPrefix: ${self:service}
   resourceStack: ${self:service}-resources-${self:provider.stage}
 
+# lamdba configurations
 functions:
   helloWorld:
     handler: src/functions/demo/helloWorld.greet
     name: ${self:custom.functionPrefix}-helloWorld
     timeout: 10
     memorySize: 128
+    package:
+      include:
+        - src/functions/demo/helloWorld.js
+      exclude:
+        - src/functions/shared/**
+        - src/functions/hub/**
+        - src/functions/demo/**
+        - '!src/functions/demo/helloWorld.js'
 
   showMyName:
     handler: src/functions/demo/showMyName.show
     name: ${self:custom.functionPrefix}-showMyName
+    package:
+      exclude:
+        - src/functions/shared/**
+        - src/functions/hub/**
+        - src/functions/demo/**
+        - '!src/functions/demo/showMyName.js'
 
   connection:
     handler: src/functions/hub/connection.handler
     name: ${self:custom.functionPrefix}-hub-connection
+
     package:
       include:
-        - src/functions/shared/node_modules
+        - src/functions/shared/node_modules/**
+        - src/functions/hub/connection.js
+      exclude:
+        - src/functions/demo/**
+
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -60,24 +89,3 @@ functions:
        HubConnectionsTable:
         Type: AWS::DynamoDB::Table
         Arn: {"Fn::ImportValue" : {"Fn::Sub" : "${self:custom.resourceStack}-HubConnectionsTable"}}
-
-  eventCounts:
-    handler: src/functions/hub/event-counts.handler
-    name: ${self:custom.functionPrefix}-hub-eventCounts
-    package:
-      include
-        - src/functions/shared/node_modules
-    iamRoleStatements:
-      - Effect: Allow
-        Action:
-          - dynamodb:Query
-          - dynamodb:Scan
-          - dynamodb:DescribeStream
-          - dynamodb:GetRecords
-          - dynamodb:ListStreams
-        Resource: arn:aws:dynamodb:eu-west-1:051643391380:table/${self:custom.resourceStack}-iot-event-counts
-    resources:
-      Resources:
-       IotEventCountsTable:
-        Type: AWS::DynamoDB::Table
-        Arn: {"Fn::ImportValue" : {"Fn::Sub" : "${self:custom.resourceStack}-IotEventCountsTable"}}

@@ -22,6 +22,7 @@ custom:
     prod: 'Retain'
   resourcePrefix: ${self:service}-${self:provider.stage}
 
+# AWS resources
 resources:
   Resources:
     HubConnectionsTable:
@@ -39,21 +40,7 @@ resources:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
 
-    IotEventCountsTable:
-      Type: AWS::DynamoDB::Table
-      DeletionPolicy: ${self:custom.policy.${self:provider.stage}}
-      Properties:
-        TableName: ${self:custom.resourcePrefix}-iot-event-counts
-        AttributeDefinitions:
-          - AttributeName: Environment_CustomerId_EventType
-            AttributeType: S
-        KeySchema:
-          - AttributeName: Environment_CustomerId_EventType
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
-
+  # resource export configuration
   Outputs:
     HubConnectionsTable:
       Description: hub connection table
@@ -63,11 +50,3 @@ resources:
           - Arn
       Export:
         Name: ${self:custom.resourcePrefix}-HubConnectionsTable
-    IotEventCountsTable:
-      Description: IOT event counts table
-      Value:
-        Fn::GetAtt:
-          - IotEventCountsTable
-          - Arn
-      Export:
-        Name: ${self:custom.resourcePrefix}-IotEventCountsTable
