@@ -41,8 +41,6 @@ functions:
     timeout: 10
     memorySize: 128
     package:
-      include:
-        - src/functions/demo/helloWorld.js
       exclude:
         - src/functions/shared/**
         - src/functions/hub/**
@@ -54,9 +52,9 @@ functions:
     name: ${self:custom.functionPrefix}-showMyName
     package:
       exclude:
-        - src/functions/shared/**
         - src/functions/hub/**
         - src/functions/demo/**
+        - '!src/functions/shared/**'
         - '!src/functions/demo/showMyName.js'
 
   connection:
@@ -65,10 +63,11 @@ functions:
 
     package:
       include:
-        - src/functions/shared/node_modules/**
+        - src/functions/hub/node_modules/**
         - src/functions/hub/connection.js
       exclude:
         - src/functions/demo/**
+        - src/functions/shared/**
 
     iamRoleStatements:
       - Effect: Allow

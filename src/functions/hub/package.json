@@ -1,5 +1,5 @@
 {
-  "name": "shared",
+  "name": "hub",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "lodash": "^4.17.11"
+    "aws-sdk": "^2.382.0"
   }
 }
