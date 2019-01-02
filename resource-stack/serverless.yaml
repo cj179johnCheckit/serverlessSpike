@@ -20,6 +20,7 @@ custom:
   policy:
     dev: 'Delete'
     prod: 'Retain'
+  resourcePrefix: ${self:service}-${self:provider.stage}
 
 resources:
   Resources:
@@ -27,7 +28,7 @@ resources:
       Type: AWS::DynamoDB::Table
       DeletionPolicy: ${self:custom.policy.${self:provider.stage}}
       Properties:
-        TableName: ${self:service}-hub-connections
+        TableName: ${self:custom.resourcePrefix}-hub-connections
         AttributeDefinitions:
           - AttributeName: Environment
             AttributeType: S
@@ -42,7 +43,7 @@ resources:
       Type: AWS::DynamoDB::Table
       DeletionPolicy: ${self:custom.policy.${self:provider.stage}}
       Properties:
-        TableName: ${self:service}-iot-event-counts
+        TableName: ${self:custom.resourcePrefix}-iot-event-counts
         AttributeDefinitions:
           - AttributeName: Environment_CustomerId_EventType
             AttributeType: S
@@ -61,7 +62,7 @@ resources:
           - HubConnectionsTable
           - Arn
       Export:
-        Name: ${self:service}-HubConnectionsTable
+        Name: ${self:custom.resourcePrefix}-HubConnectionsTable
     IotEventCountsTable:
       Description: IOT event counts table
       Value:
@@ -69,4 +70,4 @@ resources:
           - IotEventCountsTable
           - Arn
       Export:
-        Name: ${self:service}-IotEventCountsTable
+        Name: ${self:custom.resourcePrefix}-IotEventCountsTable

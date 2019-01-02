@@ -6,6 +6,9 @@ package:
     - .git/**
     - resource-stack/**
 
+plugins:
+  - serverless-iam-roles-per-function
+
 provider:
   name: aws
   timeout: 30
@@ -16,29 +19,6 @@ provider:
   runtime: nodejs8.10
   deploymentBucket:
     name: ${self:service}-deployment
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:Query
-        - dynamodb:BatchWriteItem
-        - dynamodb:Scan
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DescribeStream
-        - dynamodb:GetRecords
-        - dynamodb:GetShardIterator
-        - dynamodb:ListStreams
-      Resource: arn:aws:dynamodb:eu-west-1:051643391380:table/hub-connections
-    - Effect: Allow
-      Action:
-        - dynamodb:Query
-        - dynamodb:Scan
-        - dynamodb:DescribeStream
-        - dynamodb:GetRecords
-        - dynamodb:ListStreams
-      Resource: arn:aws:dynamodb:eu-west-1:051643391380:table/iot-event-counts
-
 
 custom:
   functionPrefix: ${self:service}
@@ -61,11 +41,25 @@ functions:
     package:
       include:
         - src/functions/shared/node_modules
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+          - dynamodb:BatchWriteItem
+          - dynamodb:Scan
+          - dynamodb:GetItem
+          - dynamodb:PutItem
+          - dynamodb:UpdateItem
+          - dynamodb:DescribeStream
+          - dynamodb:GetRecords
+          - dynamodb:GetShardIterator
+          - dynamodb:ListStreams
+        Resource: arn:aws:dynamodb:eu-west-1:051643391380:table/${self:custom.resourceStack}-hub-connections
     resources:
       Resources:
        HubConnectionsTable:
         Type: AWS::DynamoDB::Table
-        Arn: ${cf:${self:custom.resourceStack}.HubConnectionsTable}
+        Arn: {"Fn::ImportValue" : {"Fn::Sub" : "${self:custom.resourceStack}-HubConnectionsTable"}}
 
   eventCounts:
     handler: src/functions/hub/event-counts.handler
@@ -73,8 +67,17 @@ functions:
     package:
       include
         - src/functions/shared/node_modules
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+          - dynamodb:Scan
+          - dynamodb:DescribeStream
+          - dynamodb:GetRecords
+          - dynamodb:ListStreams
+        Resource: arn:aws:dynamodb:eu-west-1:051643391380:table/${self:custom.resourceStack}-iot-event-counts
     resources:
       Resources:
-       HubConnectionsTable:
+       IotEventCountsTable:
         Type: AWS::DynamoDB::Table
-        Arn: ${cf:${self:custom.resourceStack}.IotEventCountsTable}
+        Arn: {"Fn::ImportValue" : {"Fn::Sub" : "${self:custom.resourceStack}-IotEventCountsTable"}}
