@@ -1,12 +1,10 @@
 const { get } = require('lodash');
+const Response = require('../shared/classes/Response');
+const response = new Response();
 
 exports.show = (event, context, callback) => {
-  const myName = {
-    name: 'Checkit Limited'
-  };
-  const nameString = get(myName, 'name');
-
-  console.log(`My name is ${nameString}`);
-
-  callback();
+  const nameString = get(event, 'name');
+  console.log(event.queryStringParameters);
+  response.setBody(JSON.stringify({message: `My name is ${nameString}`}));
+  callback(null, response.getResponse());
 };

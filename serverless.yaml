@@ -27,6 +27,10 @@ provider:
   runtime: nodejs8.10
   deploymentBucket:
     name: ${self:service}-deployment
+  apiGateway:
+    apiKeySourceType: HEADER
+  apiKeys:
+    - ${self:provider.stage}-myAPIKEY
 
 # project customised settings
 custom:
@@ -38,8 +42,14 @@ functions:
   helloWorld:
     handler: src/functions/demo/helloWorld.greet
     name: ${self:custom.functionPrefix}-helloWorld
-    timeout: 10
-    memorySize: 128
+    events:
+      - http:
+          path: greet
+          method: get
+          integration: lambda
+          request:
+            passThrough: WHEN_NO_TEMPLATES
+
     package:
       exclude:
         - src/functions/shared/**
@@ -50,6 +60,16 @@ functions:
   showMyName:
     handler: src/functions/demo/showMyName.show
     name: ${self:custom.functionPrefix}-showMyName
+    events:
+      - http:
+          path: show
+          method: get
+          integration: lambda
+          private: true
+          request:
+            template:
+              application/json: '{ "name" : "$input.params(''name'')" }'
+
     package:
       exclude:
         - src/functions/hub/**
