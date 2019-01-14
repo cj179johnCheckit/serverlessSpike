@@ -39,72 +39,41 @@ custom:
 
 # lamdba configurations
 functions:
-  helloWorld:
-    handler: src/functions/demo/helloWorld.greet
-    name: ${self:custom.functionPrefix}-helloWorld
+  customerTemplate:
+    handler: src/functions/customerTemplate/customerTemplate.create
+    name: ${self:custom.functionPrefix}-customerTemplate
     events:
-      - http:
-          path: greet
-          method: get
-          integration: lambda
-          request:
-            passThrough: WHEN_NO_TEMPLATES
-
+      - sqs:
+        arn:
+          Fn::GetAtt:
+            - CustomerTemplateQueue
+            - Arn
     package:
       exclude:
         - src/functions/shared/**
         - src/functions/hub/**
         - src/functions/demo/**
-        - '!src/functions/demo/helloWorld.js'
+        - '!src/functions/customerTemplate/**'
 
-  showMyName:
-    handler: src/functions/demo/showMyName.show
-    name: ${self:custom.functionPrefix}-showMyName
-    events:
-      - http:
-          path: show
-          method: get
-          integration: lambda
-          private: true
-          request:
-            template:
-              application/json: '{ "name" : "$input.params(''name'')" }'
+resources:
+  Resources:
+    CustomerTemplateQueue:
+      Type: AWS::SQS::Queue
+      DeletionPolicy: Delete
+      Properties:
+        QueueName: "checkit-customer-template-test"
+        MessageRetentionPeriod: 1209600
+        VisibilityTimeout: 60
 
-    package:
-      exclude:
-        - src/functions/hub/**
-        - src/functions/demo/**
-        - '!src/functions/shared/**'
-        - '!src/functions/demo/showMyName.js'
-
-  connection:
-    handler: src/functions/hub/connection.handler
-    name: ${self:custom.functionPrefix}-hub-connection
-
-    package:
-      include:
-        - src/functions/hub/node_modules/**
-        - src/functions/hub/connection.js
-      exclude:
-        - src/functions/demo/**
-        - src/functions/shared/**
-
-    iamRoleStatements:
-      - Effect: Allow
-        Action:
-          - dynamodb:Query
-          - dynamodb:BatchWriteItem
-          - dynamodb:Scan
-          - dynamodb:GetItem
-          - dynamodb:PutItem
-          - dynamodb:UpdateItem
-          - dynamodb:DescribeStream
-          - dynamodb:GetRecords
-          - dynamodb:GetShardIterator
-          - dynamodb:ListStreams
-        Resource: arn:aws:dynamodb:eu-west-1:051643391380:table/${self:custom.resourceStack}-hub-connections
-    resources:
-      Resources:
-       HubConnectionsTable:
-        Type: AWS::DynamoDB::Table
-        Arn: {"Fn::ImportValue" : {"Fn::Sub" : "${self:custom.resourceStack}-HubConnectionsTable"}}
+    CustomerTemplateSNSTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        DisplayName: cusCreate,
+        TopicName: "checkit-customer-template-test"
+        Subscription:
+          -
+            Endpoint:
+              Fn::GetAtt:
+                - CustomerTemplateQueue
+                - "Arn"
+            Protocol: "sqs"
