@@ -27,10 +27,10 @@ provider:
   runtime: nodejs8.10
   deploymentBucket:
     name: ${self:service}-deployment
-  apiGateway:
-    apiKeySourceType: HEADER
-  apiKeys:
-    - ${self:provider.stage}-myAPIKEY
+  # apiGateway:
+  #   apiKeySourceType: HEADER
+  # apiKeys:
+  #   - ${self:provider.stage}-myAPIKEY
 
 # project customised settings
 custom:
