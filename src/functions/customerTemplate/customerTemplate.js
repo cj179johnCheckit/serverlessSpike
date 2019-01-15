@@ -1,6 +1,6 @@
 const AWSLib = require('./libs/aws');
-
-const awsLib = new AWSLib();
+const utils = require('./libs/utils');
+const awsLib = new AWSLib(utils);
 
 exports.create = async function(event, context, callback) {
   try {

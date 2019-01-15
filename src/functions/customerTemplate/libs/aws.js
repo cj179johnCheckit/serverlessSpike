@@ -1,10 +1,11 @@
 const AWS = require('aws-sdk');
-const { get } = require('lodash');
+const lodashGet = require('lodash.get');
 
 AWS.config.update({region: 'eu-west-1'});
 
 class AWSLib {
-  constructor() {
+  constructor(utils) {
+    this.utils = utils;
     this.sqs = new AWS.SQS({ sqs: '2012-11-05'});
   }
 
@@ -30,10 +31,11 @@ class AWSLib {
           reject(error);
         }
 
-        const message = get(response, 'Messages[0]', false);
+        const message = lodashGet(response, 'Messages[0]', false);
 
-        if (!message) {
-          reject('Recieve message failed from SQS');
+        if (!this.utils.validateMessageBody(message)) {
+          console.log('No valid message recieved');
+          return resolve({});
         }
 
         const messageBody = JSON.parse(message.Body);
