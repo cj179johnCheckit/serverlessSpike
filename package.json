@@ -4,13 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "local-debug": "export SLS_DEBUG=* && node --inspect-brk ./node_modules/.bin/serverless invoke local --stage=dev"
+    "clean": "rm -rf ./build",
+    "compile": "tsc",
+    "lint": "tslint -p tsconfig.json",
+    "watch": "tsc --watch"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "serverless": "^1.35.1",
-    "serverless-iam-roles-per-function": "^1.0.4"
+    "@types/lodash.get": "^4.4.4"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.388.0",
+    "serverless-iam-roles-per-function": "^1.0.4",
+    "typescript": "^3.2.2"
   }
 }

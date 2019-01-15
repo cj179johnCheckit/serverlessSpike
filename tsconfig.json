@@ -1,0 +1,23 @@
+{
+  "version": "1.0.0",
+  "compilerOptions": {
+    "outDir": "build",
+    "lib": ["es6", "dom"],
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "inlineSourceMap": true,
+    "noImplicitAny": true,
+    "declaration": true,
+    "alwaysStrict": true
+  },
+  "inculde": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "build",
+    "node_modules"
+  ]
+}

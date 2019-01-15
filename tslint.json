@@ -1,0 +1,38 @@
+{
+  "extends": ["tslint-eslint-rules", "tslint:recommended"],
+  "rules": {
+    "max-line-length": [true, 120],
+    "new-parens": true,
+    "no-arg": true,
+    "no-bitwise": true,
+    "no-conditional-assignment": true,
+    "no-consecutive-blank-lines": [true, 1],
+    "no-console": false,
+    "quotemark": [true, "single", "avoid-escape"],
+    "trailing-comma": false,
+    "prefer-const": true,
+    "ter-indent": [true, 2],
+    "interface-name": [true, "never-prefix"],
+    "only-arrow-functions": [true, "allow-declarations", "allow-named-functions"],
+    "semicolon": true,
+    "arrow-parens": [true, "ban-single-arg-parens"],
+    "no-empty": false,
+    "one-variable-per-declaration": false,
+    "no-unused-expression": false,
+    "max-classes-per-file": false
+  },
+  "jsRules": {
+    "max-line-length": [true, 120],
+    "quotemark": false,
+    "ter-indent": [true, 2],
+    "trailing-comma": false
+  },
+  "files": [
+    "src/**/*.js",
+    "test/**/*.js",
+    "config/**/*.js",
+    "src/**/*.ts",
+    "test/**/*.ts",
+    "config/**/*.ts"
+  ]
+}

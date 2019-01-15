@@ -40,7 +40,7 @@ custom:
 # lamdba configurations
 functions:
   customerTemplate:
-    handler: src/functions/customerTemplate/customerTemplate.create
+    handler: build/customerTemplate.create
     name: ${self:custom.functionPrefix}-customerTemplate
     events:
       - sqs:
@@ -49,11 +49,10 @@ functions:
             - CustomerTemplateQueue
             - Arn
     package:
-      exclude:
-        - src/functions/shared/**
-        - src/functions/hub/**
-        - src/functions/demo/**
-        - '!src/functions/customerTemplate/**'
+      include:
+        - 'build/**'
+        - '!*.*'
+        - '!src/**'
 
 resources:
   Resources:
