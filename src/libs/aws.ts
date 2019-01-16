@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { config, SQS } from 'aws-sdk';
-import { Message, MessageBody, MessagePayload } from './interfaces';
+import { MessageBody, MessagePayload } from './interfaces';
 
 config.update({region: 'eu-west-1'});
 
@@ -9,10 +9,6 @@ class CustomerMessage implements MessagePayload {
   customerId: '';
   customerTemplateId: '';
 }
-
-// interface Response {
-//   Messages: Message[]
-// }
 
 const defaultMessage = new CustomerMessage();
 

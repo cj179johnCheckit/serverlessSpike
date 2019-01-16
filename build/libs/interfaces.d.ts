@@ -10,3 +10,11 @@ export interface MessagePayload {
     customerId: string;
     customerTemplateId: string;
 }
+export interface ConfigMapping {
+    [key: string]: string;
+    NODE_ENV: string;
+    CHECKITDB_URI: string;
+}
+export interface BootstrapConfig {
+    [key: string]: any;
+}

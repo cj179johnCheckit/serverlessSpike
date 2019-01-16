@@ -12,10 +12,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/lodash.get": "^4.4.4"
+    "@checkit/checkit-application-bootstrapper": "^2.0.1",
+    "@types/lodash.get": "^4.4.4",
+    "@types/node": "^10.12.18",
+    "mongodb": "^3.1.11",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.2.11"
   },
   "devDependencies": {
     "aws-sdk": "^2.388.0",
+    "serverless": "^1.36.1",
     "serverless-iam-roles-per-function": "^1.0.4",
     "typescript": "^3.2.2"
   }

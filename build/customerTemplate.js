@@ -10,15 +10,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const aws_1 = require("./libs/aws");
 const utils_1 = require("./libs/utils");
+const bootstrap_1 = require("./libs/bootstrap");
+const config_1 = require("./libs/config");
 const utils = new utils_1.Utils();
 const awsLib = new aws_1.AWSLib(utils);
+const bootstrap = new bootstrap_1.Bootstrap(utils);
+const environment = process.env['CHECKIT_ENV'] || 'local';
+const config = new config_1.Config();
 exports.create = function (event = {}, context = {}, callback) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const queueUrl = yield awsLib.getQueueUrl('checkit-customer-template-test');
             const message = yield awsLib.getMessage(queueUrl);
             const templateId = message.customerTemplateId;
-            const custoemrId = message.customerId;
+            const customerId = message.customerId;
+            if (environment === 'local') {
+                config.setLocalConfigurations();
+            }
+            const dbConnection = yield bootstrap.getConnection(environment);
+            console.log(dbConnection);
             return callback(null, templateId);
         }
         catch (error) {
@@ -26,4 +36,4 @@ exports.create = function (event = {}, context = {}, callback) {
         }
     });
 };
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY3VzdG9tZXJUZW1wbGF0ZS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uL3NyYy9jdXN0b21lclRlbXBsYXRlLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7QUFBQSxvQ0FBb0M7QUFDcEMsd0NBQXFDO0FBRXJDLE1BQU0sS0FBSyxHQUFHLElBQUksYUFBSyxFQUFFLENBQUM7QUFDMUIsTUFBTSxNQUFNLEdBQUcsSUFBSSxZQUFNLENBQUMsS0FBSyxDQUFDLENBQUM7QUFFcEIsUUFBQSxNQUFNLEdBQUcsVUFBZ0IsUUFBYSxFQUFFLEVBQUUsVUFBZSxFQUFFLEVBQUUsUUFBa0I7O1FBQzFGLElBQUk7WUFDRixNQUFNLFFBQVEsR0FBRyxNQUFNLE1BQU0sQ0FBQyxXQUFXLENBQUMsZ0NBQWdDLENBQUMsQ0FBQztZQUM1RSxNQUFNLE9BQU8sR0FBRyxNQUFNLE1BQU0sQ0FBQyxVQUFVLENBQUMsUUFBUSxDQUFDLENBQUM7WUFDbEQsTUFBTSxVQUFVLEdBQUcsT0FBTyxDQUFDLGtCQUFrQixDQUFDO1lBQzlDLE1BQU0sVUFBVSxHQUFHLE9BQU8sQ0FBQyxVQUFVLENBQUM7WUFDdEMsT0FBTyxRQUFRLENBQUMsSUFBSSxFQUFFLFVBQVUsQ0FBQyxDQUFDO1NBQ25DO1FBQUMsT0FBTSxLQUFLLEVBQUU7WUFDYixPQUFPLFFBQVEsQ0FBQyxLQUFLLENBQUMsQ0FBQztTQUN4QjtJQUNILENBQUM7Q0FBQSxDQUFDIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY3VzdG9tZXJUZW1wbGF0ZS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uL3NyYy9jdXN0b21lclRlbXBsYXRlLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7QUFBQSxvQ0FBb0M7QUFDcEMsd0NBQXFDO0FBQ3JDLGdEQUE2QztBQUM3QywwQ0FBdUM7QUFFdkMsTUFBTSxLQUFLLEdBQUcsSUFBSSxhQUFLLEVBQUUsQ0FBQztBQUMxQixNQUFNLE1BQU0sR0FBRyxJQUFJLFlBQU0sQ0FBQyxLQUFLLENBQUMsQ0FBQztBQUNqQyxNQUFNLFNBQVMsR0FBRyxJQUFJLHFCQUFTLENBQUMsS0FBSyxDQUFDLENBQUM7QUFDdkMsTUFBTSxXQUFXLEdBQUcsT0FBTyxDQUFDLEdBQUcsQ0FBQyxhQUFhLENBQUMsSUFBSSxPQUFPLENBQUM7QUFDMUQsTUFBTSxNQUFNLEdBQUcsSUFBSSxlQUFNLEVBQUUsQ0FBQztBQUVmLFFBQUEsTUFBTSxHQUFHLFVBQWdCLFFBQWEsRUFBRSxFQUFFLFVBQWUsRUFBRSxFQUFFLFFBQWtCOztRQUUxRixJQUFJO1lBQ0YsTUFBTSxRQUFRLEdBQUcsTUFBTSxNQUFNLENBQUMsV0FBVyxDQUFDLGdDQUFnQyxDQUFDLENBQUM7WUFDNUUsTUFBTSxPQUFPLEdBQUcsTUFBTSxNQUFNLENBQUMsVUFBVSxDQUFDLFFBQVEsQ0FBQyxDQUFDO1lBQ2xELE1BQU0sVUFBVSxHQUFHLE9BQU8sQ0FBQyxrQkFBa0IsQ0FBQztZQUM5QyxNQUFNLFVBQVUsR0FBRyxPQUFPLENBQUMsVUFBVSxDQUFDO1lBRXRDLElBQUksV0FBVyxLQUFLLE9BQU8sRUFBRTtnQkFDM0IsTUFBTSxDQUFDLHNCQUFzQixFQUFFLENBQUM7YUFDakM7WUFFRCxNQUFNLFlBQVksR0FBRyxNQUFNLFNBQVMsQ0FBQyxhQUFhLENBQUMsV0FBVyxDQUFDLENBQUM7WUFFaEUsT0FBTyxDQUFDLEdBQUcsQ0FBQyxZQUFZLENBQUMsQ0FBQztZQUUxQixPQUFPLFFBQVEsQ0FBQyxJQUFJLEVBQUUsVUFBVSxDQUFDLENBQUM7U0FDbkM7UUFBQyxPQUFNLEtBQUssRUFBRTtZQUNiLE9BQU8sUUFBUSxDQUFDLEtBQUssQ0FBQyxDQUFDO1NBQ3hCO0lBQ0gsQ0FBQztDQUFBLENBQUMifQ==
