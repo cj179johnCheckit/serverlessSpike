@@ -5,5 +5,5 @@ export declare class Bootstrap {
     private utils;
     constructor(utils: any);
     getConfigMapping(environment: string): BootstrapConfigMapping;
-    getConnection(environmentName: string): Promise<Connection>;
+    getDBConnection(environmentName: string): Promise<Connection>;
 }

@@ -24,7 +24,7 @@ export class Bootstrap {
     };
   }
 
-  async getConnection(environmentName: string): Promise<Connection> {
+  async getDBConnection(environmentName: string): Promise<Connection> {
     const configMapping = this.getConfigMapping(environmentName);
     const configs: BootstrapConfig[] = await bootstrap(configMapping);
 
