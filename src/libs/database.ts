@@ -9,10 +9,9 @@ interface breadcrumbId {
 
 export class DatabaseService {
   private service: MongoService;
-  private count: number;
+
   constructor(dbConnection: any) {
     this.service = new MongoService(dbConnection);
-    this.count = 0;
   }
 
   async findCustomerTemplate(templateId: string): Promise<any> {
@@ -30,8 +29,49 @@ export class DatabaseService {
       await this.importCheck(check, null);
     })
   }
-  async importCheck(source: any, parentCheck: any) {
-    this.count ++;
+
+  async importCheck(source: any, parentCheck:any) {
+
+    console.log(source.name);
+    switch (source.type) {
+      case 'checklist':
+        source.checklist.checklistItems.map(async(item: any, index: any) => {
+          const itemData = await this.service.findOne({_id: item.checkEntityId});
+          this.importCheck(itemData, source);
+        });
+      break;
+      case 'optionsList':
+        source.optionsList.options.map(async (option: any, index: any) => {
+          if (option.followUpCheckEntityId) {
+            const followUpData = await this.service.findOne({_id: option.followUpCheckEntityId});
+            this.importCheck(followUpData, source);
+          }
+
+          if (option.timeDelayedCheckEntityId) {
+            const timeDelayData = await this.service.findOne({_id: option.timeDelayedCheckEntityId});
+            this.importCheck(timeDelayData, source);
+          }
+
+        });
+      break;
+      case 'temperature':
+      case 'text':
+      case 'acknowledgement':
+      case 'dateEntry':
+        if (source[source.type].followUpCheckEntityId) {
+          const followUpData = await this.service.findOne({_id: source[source.type].followUpCheckEntityId});
+          this.importCheck(followUpData, source);
+        }
+        if (source[source.type].timeDelayedCheckEntityId) {
+          const timeDelayedData = await this.service.findOne({_id: source[source.type].timeDelayedCheckEntityId});
+          this.importCheck(timeDelayedData, source);
+        }
+      break;
+    }
+  }
+
+  async importCheckbad(source: any, parentCheck: any) {
+
     const sourceClone = cloneDeep(source);
     const entityId = this.service.createId();
     const version = Date.now();
@@ -50,38 +90,53 @@ export class DatabaseService {
 
     switch (newCheck.type) {
       case 'checklist':
-        source.checklist.checklistItems.map(async (item: any, index: any) => {
+        source.checklist.checklistItems.map(async(item: any, index: any) => {
           const itemData = await this.service.findOne({_id: item.checkEntityId});
           if (itemData) {
-            newCheck.checklist.checklistItems[index].checkEntityId = await this.importCheck(itemData, newCheck)._id;
+            const newData = await this.importCheck(itemData, newCheck);
+
+            newCheck.checklist.checklistItems[index].checkEntityId = newData._id;
           }
         });
       break;
-      // case 'optionsList':
-      //   source.optionsList.options.map(async (option: any) => {
-      //     if (option.followUpCheck) {
-      //       option.followUpCheck = await this.importCheck(option.followUpCheck, newCheck);
-      //     }
+      case 'optionsList':
+        source.optionsList.options.map(async (option: any, index: any) => {
+          if (option.followUpCheck) {
+            const optionData = await this.service.findOne({_id: option.followUpCheck});
+            if (optionData) {
+              source.optionsList.options[index].followUpCheck.entityId = await this.importCheck(optionData, newCheck);
+            }
+          }
 
-      //     if (option.timeDelayedCheck) {
-      //       option.timeDelayedCheck = await this.importCheck(option.timeDelayedCheck, newCheck);
-      //     }
+          if (option.timeDelayedCheck) {
+            const optionData = await this.service.findOne({_id: option.timeDelayedCheck});
+            if (optionData) {
+              source.optionsList.options[index].timeDelayedCheck.entityId = await this.importCheck(optionData, newCheck);
+            }
+          }
 
-      //   });
-      // break;
-      // case 'temperature':
-      // case 'text':
-      // case 'acknowledgement':
-      // case 'dateEntry':
-      //   if (source.followUpCheck) {
-      //     source.followUpCheckEntityId = this.importCheck(source.followUpCheck, newCheck);
-      //   }
-      //   if (source.timeDelayedCheck) {
-      //     source.timeDelayedCheck = this.importCheck(source.timeDelayedCheck, newCheck);
-      //   }
-      // break;
+        });
+      break;
+      case 'temperature':
+      case 'text':
+      case 'acknowledgement':
+      case 'dateEntry':
+        if (source.followUpCheck) {
+          const followUpCheckData = await this.service.findOne({_id: source.followUpCheck});
+          if (followUpCheckData) {
+            source.followUpCheckEntityId = await this.importCheck(followUpCheckData, newCheck);
+          }
+        }
+        if (source.timeDelayedCheck) {
+          const timeDelayedCheckData = await this.service.findOne({_id: source.timeDelayedCheck});
+          if (timeDelayedCheckData) {
+            source.timeDelayedCheck.entityId = await this.importCheck(timeDelayedCheckData, newCheck);
+          }
+        }
+      break;
     }
-    await this.service.insert([newCheck]);
+    // await this.service.insert([newCheck]);
+    console.log(newCheck.name);
     return newCheck;
   }
 
