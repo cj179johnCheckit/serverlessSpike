@@ -1,5 +1,7 @@
 import { Collection } from 'typeorm';
 
+const mongodb = require('mongodb');
+
 export class MongoService {
   private db: any;
   private collection: Collection;
@@ -13,6 +15,10 @@ export class MongoService {
     return this;
   }
 
+  async findOne(params: any): Promise<any> {
+    const results = await this.find(params);
+    return results.length > 0 ? results.shift() : null;
+  }
   find(params: any): Promise<any> {
     return new Promise((resolve, reject) => {
       this.collection.find(params).toArray((err: Error, docs: any) =>
@@ -25,5 +31,13 @@ export class MongoService {
       params,
       { $set: newValue }
     );
+  }
+
+  async insert(data: Object[]): Promise<any> {
+    return await this.collection.insertMany(data);
+  }
+
+  createId() {
+    return new mongodb.ObjectID();
   }
 }

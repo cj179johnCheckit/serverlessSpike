@@ -26,8 +26,10 @@ export const create = async function (event: any = {}, context: any = {}, callba
 
     const dbService = new DatabaseService(dbConnection);
 
-    const templateMeta = await dbService.findCustomerTemplate('new-customer-template');
+    // const templateMeta = await dbService.findCustomerTemplate('m23xg');
 
+    const templateChecklists = await dbService.findTemplateChecklists('m23xg');
+    const templateSchedules = await dbService.findTemplateSchedules('m23xg');
     return callback(null, templateId);
   } catch(error) {
     return callback(error);
