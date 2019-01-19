@@ -23,11 +23,11 @@ export interface BootstrapConfig {
   [key: string]: any;
 };
 
-export interface Check {
-  id: ObjectID;
-  name: string;
-  type: string;
-}
+// export interface Check {
+//   // id: ObjectID;
+//   name: string;
+//   type: string;
+// }
 
 export interface ChecklistCheck extends Check {
   type: 'checklist';
@@ -49,8 +49,10 @@ export interface CheckData {
   timeDelayedCheckEntityId: string;
 }
 
-export interface SingleCheck {
-  type: 'temperature' | 'dateEntry' | 'acknowledgement' | 'text';
+export type OtherCheckTypes = 'temperature' | 'dateEntry' | 'acknowledgement' | 'text';
+
+export interface SingleCheck extends Check {
+  type: OtherCheckTypes;
   temperature?: CheckData;
   dateEntry?: CheckData;
   acknowledgement?: CheckData;
@@ -67,7 +69,6 @@ export interface BreadcrumbId {
   name: string,
   entityId: ObjectID
 };
-
 export interface Check {
   _id: ObjectID;
   name: string;

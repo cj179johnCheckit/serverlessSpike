@@ -4,9 +4,7 @@ import { ChecklistCheck } from '../../interfaces';
 export class CheckList implements Strategy {
   getChildren(check: ChecklistCheck): Array<any> {
     return check.checklist.checklistItems.map(item => ({
-      id: item.checkEntityId,
-      name: 'checkListItem',
-      type: 'checklist'
+      id: item.checkEntityId
     }));
   }
 

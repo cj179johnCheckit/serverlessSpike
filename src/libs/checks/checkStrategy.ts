@@ -1,6 +1,7 @@
 import { CheckList } from './strategies/CheckList';
 import { Others } from  './strategies/Others';
-import { OptionList } from './strategies/Optionlist';
+import { OptionsList } from './strategies/OptionsList';
+import { log } from 'util';
 
 export interface Strategy {
   getChildren: Function;
@@ -15,7 +16,7 @@ export interface StrategyMappings {
 export class CheckStrategy {
   private strategyMappings: StrategyMappings = {
     checklist: CheckList,
-    optionsList: OptionList,
+    optionsList: OptionsList,
     temperature: Others,
     text: Others,
     acknowledgement: Others,
@@ -27,7 +28,7 @@ export class CheckStrategy {
   }
 
   getStrategy(checkType: string): Strategy {
-    if(!this.validateCheckType) {
+    if(!this.validateCheckType(checkType)) {
       throw new Error('The check type does not support');
     }
     const StractegyClass = this.strategyMappings[checkType];

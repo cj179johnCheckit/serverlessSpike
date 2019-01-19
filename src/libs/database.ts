@@ -1,9 +1,7 @@
 import { MongoService } from './mongo';
 import { get, cloneDeep } from 'lodash';
-// import { ObjectID } from 'typeorm';
-import { Check, ChecklistCheck, OptionsListCheck, SingleCheck } from './interfaces';
+import { Check } from './interfaces';
 import { CheckStrategy } from './checks/CheckStrategy';
-import { promises } from 'fs';
 
 export class DatabaseService {
   private service: MongoService;
@@ -37,7 +35,6 @@ export class DatabaseService {
 
   async importCheck(source: Check, parent: Check = null, newParent: Check = null): Promise<any> {
     console.log(source.name);
-    const proimses = [];
 
     const sourceClone = cloneDeep(source);
     const entityId = this.service.createId();

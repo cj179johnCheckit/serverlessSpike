@@ -18,11 +18,6 @@ export interface ConfigMapping {
 export interface BootstrapConfig {
     [key: string]: any;
 }
-export interface Check {
-    id: ObjectID;
-    name: string;
-    type: string;
-}
 export interface ChecklistCheck extends Check {
     type: 'checklist';
     checklist: {
@@ -40,8 +35,9 @@ export interface CheckData {
     followUpCheckEntityId: string;
     timeDelayedCheckEntityId: string;
 }
-export interface SingleCheck {
-    type: 'temperature' | 'dateEntry' | 'acknowledgement' | 'text';
+export declare type OtherCheckTypes = 'temperature' | 'dateEntry' | 'acknowledgement' | 'text';
+export interface SingleCheck extends Check {
+    type: OtherCheckTypes;
     temperature?: CheckData;
     dateEntry?: CheckData;
     acknowledgement?: CheckData;

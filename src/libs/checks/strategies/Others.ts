@@ -1,4 +1,4 @@
-import { SingleCheck } from '../../interfaces';
+import { SingleCheck, OtherCheckTypes } from '../../interfaces';
 import  { Strategy } from '../CheckStrategy';
 
 export class Others implements Strategy {
@@ -7,26 +7,32 @@ export class Others implements Strategy {
     const childProperty = check[check.type];
     if(childProperty.followUpCheckEntityId) {
       children.push({
-        id: childProperty.followUpCheckEntityId,
-        name: 'followUpCheckEntityId',
-        type: check.type
+        id: childProperty.followUpCheckEntityId
       });
     }
     if(childProperty.timeDelayedCheckEntityId) {
       children.push({
-        id: childProperty.timeDelayedCheckEntityId,
-        name: 'timeDelayedCheckEntityId',
-        type: check.type
+        id: childProperty.timeDelayedCheckEntityId
       });
     }
     return children;
   }
 
   needsUpdateChildLink(parent: SingleCheck): boolean {
-    return false;
+    const childLinksField = parent[parent.type];
+    return childLinksField.followUpCheckEntityId !== null
+      || childLinksField.timeDelayedCheckEntityId !== null;
   }
 
-  updateChildLink(parent: SingleCheck, newChildId: String, existingChildId: String): SingleCheck {
+  updateChildLink(parent: SingleCheck, newChildId: string, existingChildId: string): SingleCheck {
+    const childField = parent[parent.type];
+    if (childField.followUpCheckEntityId === existingChildId) {
+      childField.followUpCheckEntityId = newChildId;
+    }
+    if (childField.timeDelayedCheckEntityId === existingChildId) {
+      childField.timeDelayedCheckEntityId = newChildId;
+    }
+    parent[parent.type] = childField;
     return parent;
   }
 }
