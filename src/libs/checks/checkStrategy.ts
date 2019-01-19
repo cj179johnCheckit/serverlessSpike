@@ -2,6 +2,8 @@ import { ChecklistCheck, OptionsListCheck, SingleCheck } from '../interfaces';
 
 export interface Strategy {
   getChildren: Function;
+  updateChildLink: Function;
+  needsUpdateChildLink: Function;
 }
 
 export class CheckList implements Strategy{
@@ -11,6 +13,19 @@ export class CheckList implements Strategy{
       name: 'checkListItem',
       type: 'checklist'
     }));
+  }
+
+  needsUpdateChildLink(parent: ChecklistCheck): boolean {
+    return parent.checklist.checklistItems.length > 0;
+  }
+
+  updateChildLink(parent: ChecklistCheck, newChildId: String, existingChildId: String): ChecklistCheck {
+    parent.checklist.checklistItems = parent.checklist.checklistItems.map(item => {
+      if(item.checkEntityId === existingChildId) {
+        item.checkEntityId = newChildId;
+      }
+    });
+    return parent;
   }
 }
 
@@ -35,6 +50,14 @@ export class OptionList implements Strategy {
     });
     return children;
   }
+
+  needsUpdateChildLink(parent: ChecklistCheck): boolean {
+    return parent.checklist.checklistItems.length > 0;
+  }
+
+  updateChildLink(parent: OptionsListCheck, newChildId: String, existingChildId: String): OptionsListCheck {
+    return parent;
+  }
 }
 
 export class Others implements Strategy {
@@ -57,6 +80,14 @@ export class Others implements Strategy {
     }
     return children;
   }
+
+  needsUpdateChildLink(parent: ChecklistCheck): boolean {
+    return parent.checklist.checklistItems.length > 0;
+  }
+
+  updateChildLink(parent: SingleCheck, newChildId: String, existingChildId: String): SingleCheck {
+    return parent;
+  }
 }
 
 export interface StrategyMappings {
@@ -72,6 +103,10 @@ export class CheckStrategy {
     acknowledgement: Others,
     dateEntry: Others
   };
+
+  needsUpdateChildLink(parent: ChecklistCheck): boolean {
+    return parent.checklist.checklistItems.length > 0;
+  }
 
   validateCheckType(checkType: string): Boolean {
     return Object.keys(this.strategyMappings).indexOf(checkType) > -1;

@@ -5,5 +5,5 @@ export declare class DatabaseService {
     findCustomerTemplate(templateId: string): Promise<any>;
     findTemplateChecklists(templateId: string, customerId?: string): Promise<any>;
     findTemplateSchedules(templateId: string): Promise<any>;
-    importCheck(source: Check, parent?: Check): Promise<any>;
+    importCheck(source: Check, parent?: Check, newParent?: Check): Promise<any>;
 }

@@ -3,6 +3,7 @@ import { get, cloneDeep } from 'lodash';
 // import { ObjectID } from 'typeorm';
 import { Check, ChecklistCheck, OptionsListCheck, SingleCheck } from './interfaces';
 import { CheckStrategy } from './checks/checkStrategy';
+import { promises } from 'fs';
 
 export class DatabaseService {
   private service: MongoService;
@@ -24,7 +25,7 @@ export class DatabaseService {
 
     const checksToDuplicate = await this.service.find({ customerId: templateId, isRoot: true });
     return Promise.all(checksToDuplicate.map(async (check: Check) =>
-      await this.importCheck(check, null)
+      await this.importCheck(check, null, null)
     ));
 
   }
@@ -34,8 +35,9 @@ export class DatabaseService {
     return await this.service.find({ customerId: templateId});
   }
 
-  async importCheck(source: Check, parent: Check = null): Promise<any> {
+  async importCheck(source: Check, parent: Check = null, newParent: Check = null): Promise<any> {
     console.log(source.name);
+    const proimses = [];
 
     const sourceClone = cloneDeep(source);
     const entityId = this.service.createId();
@@ -52,13 +54,20 @@ export class DatabaseService {
       breadcrumbs
     });
 
-    const strategy = new CheckStrategy().getStractegy(source.type);
+    const sourceStrategy = new CheckStrategy().getStractegy(source.type);
 
-    const children = strategy.getChildren(source);
+    const children = sourceStrategy.getChildren(source);
+
+    // if (newParent) {
+    //   const parentStrategy = new CheckStrategy().getStractegy(newParent.type);
+    //   if (parentStrategy.needsUpdateChildLink(newParent)) {
+    //     const updatedNewParent = parentStrategy.updateChildLink(newParent, entityId, source._id);
+    //   }
+    // }
 
     return Promise.all(children.map(async (child: any) => {
       const childDetails = await this.service.findOne({_id: child.id});
-      return await this.importCheck(childDetails, source);
+      return await this.importCheck(childDetails, source, newCheck);
     }));
 
     // const updatedChildren = Promise.all(children.map(async child => await this.copy(child, source)))
