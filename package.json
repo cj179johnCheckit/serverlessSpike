@@ -7,7 +7,9 @@
     "clean": "rm -rf ./build",
     "compile": "tsc",
     "lint": "tslint -p tsconfig.json",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "test": "./node_modules/mocha/bin/mocha -r ts-node/register src/**/*.spec.ts",
+    "test-watch": "./node_modules/mocha/bin/mocha -w -r ts-node/register src/**/*.spec.ts"
   },
   "author": "",
   "license": "ISC",
@@ -20,9 +22,14 @@
     "typeorm": "^0.2.11"
   },
   "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.5",
     "aws-sdk": "^2.388.0",
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
     "serverless": "^1.36.1",
     "serverless-iam-roles-per-function": "^1.0.4",
+    "ts-node": "^7.0.1",
     "typescript": "^3.2.2"
   }
 }
