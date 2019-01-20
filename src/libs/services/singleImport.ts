@@ -2,7 +2,7 @@ import { MongoService } from './mongo';
 import { get, cloneDeep } from 'lodash';
 import { Check, BreadcrumbId } from '../interfaces';
 import { CheckStrategy } from '../strategy/CheckStrategy';
-import { log } from 'util';
+import { ObjectID } from 'typeorm';
 
 export class SingleImport {
   private service: MongoService;
@@ -33,4 +33,19 @@ export class SingleImport {
       customerId
     });
   }
+
+  getCheckChildren(source: Check): any[] {
+    const sourceStrategy = new CheckStrategy().getStrategy(source.type);
+    return sourceStrategy.getChildren(source);
+  }
+
+  async updateCheckParent(parent: Check, childId: ObjectID, sourceCheckId: ObjectID): Promise<any> {
+    const parentStrategy = new CheckStrategy().getStrategy(parent.type);
+    if (parentStrategy.needsUpdateChildLink(parent)) {
+      const updatedParent = parentStrategy.updateChildLink(parent, childId, sourceCheckId);
+      return await this.service.updateOne('check', { _id: parent._id }, updatedParent);
+    }
+    return Promise.resolve();
+  }
+
 }

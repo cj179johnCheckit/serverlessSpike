@@ -1,8 +1,6 @@
 import { MongoService } from './mongo';
-import { cloneDeep } from 'lodash';
 import { Check } from '../interfaces';
 import { SingleImport } from './singleImport';
-import { CheckStrategy } from '../strategy/CheckStrategy';
 
 export class ImportService {
   private service: MongoService;
@@ -23,22 +21,22 @@ export class ImportService {
 
   async importCheck(source: Check, parent: Check = null, newParent: Check = null): Promise<any> {
     console.log(source.name);
+    const promises = [];
 
     const newCheck = this.singleImport.copyCheck(source, newParent, 'test-customer-id');
+    const children = this.singleImport.getCheckChildren(source);
 
-    const sourceStrategy = new CheckStrategy().getStrategy(source.type);
-    const children = sourceStrategy.getChildren(source);
     if (newParent) {
-      const parentStrategy = new CheckStrategy().getStrategy(newParent.type);
-      if (parentStrategy.needsUpdateChildLink(newParent)) {
-        const updatedNewParent = parentStrategy.updateChildLink(newParent, newCheck._id, source._id);
-      }
+      const updatePromise = await this.singleImport.updateCheckParent(newParent, newCheck._id, source._id);
+      promises.push(updatePromise);
     }
 
-    return Promise.all(children.map(async (child: any) => {
+    const childrenSearchPromises = children.map(async (child: any) => {
       const childDetails = await this.service.findOne('check', { _id: child.id });
       return await this.importCheck(childDetails, source, newCheck);
-    }));
+    });
+
+    return Promise.all(promises.concat(childrenSearchPromises));
   }
 
   async importTemplateSchedules(templateId: string): Promise<any> {
