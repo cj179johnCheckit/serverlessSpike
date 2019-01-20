@@ -32,7 +32,7 @@ export const create = async function (event: any = {}, context: any = {}, callba
 
     console.log(JSON.stringify(templateChecklists));
     // const templateSchedules = await dbService.findTemplateSchedules('m23xg');
-    // return callback(null, templateId);
+    return callback(null, templateId);
   } catch(error) {
     return callback(error);
   }
