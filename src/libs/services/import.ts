@@ -36,6 +36,10 @@ export class ImportService {
       return await this.importCheck(childDetails, source, newCheck);
     });
 
+    const saveNewCheckPromise = await this.service.insert('check', [newCheck]);
+
+    promises.push(saveNewCheckPromise);
+
     return Promise.all(promises.concat(childrenSearchPromises));
   }
 
