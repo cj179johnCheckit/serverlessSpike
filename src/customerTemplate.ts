@@ -1,8 +1,8 @@
 import { AWSLib } from './libs/aws';
-import { Utils } from './libs/utils';
+import { Utils } from './libs/services/utils';
 import { Bootstrap } from './libs/bootstrap';
 import { Config } from './libs/config';
-import { DatabaseService } from './libs/database';
+import { ImportService } from './libs/services/import';
 
 const utils = new Utils();
 const awsLib = new AWSLib(utils);
@@ -24,11 +24,11 @@ export const create = async function (event: any = {}, context: any = {}, callba
 
     const dbConnection = await bootstrap.getDBConnection(environment);
 
-    const dbService = new DatabaseService(dbConnection);
+    const importService = new ImportService(dbConnection);
 
-    // const templateMeta = await dbService.findCustomerTemplate('m23xg');
+    // const templateMeta = await importService.findCustomerTemplate('m23xg');
 
-    const templateChecklists = await dbService.findTemplateChecklists('m23xg');
+    const templateChecklists = await importService.findTemplateChecklists('m23xg');
 
     console.log(JSON.stringify(templateChecklists));
     // const templateSchedules = await dbService.findTemplateSchedules('m23xg');

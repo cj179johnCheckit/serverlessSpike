@@ -1,9 +1,9 @@
 import { MongoService } from './mongo';
 import { get, cloneDeep } from 'lodash';
-import { Check } from './interfaces';
-import { CheckStrategy } from './checks/CheckStrategy';
+import { Check } from '../interfaces';
+import { CheckStrategy } from '../strategy/CheckStrategy';
 
-export class DatabaseService {
+export class ImportService {
   private service: MongoService;
 
   constructor(dbConnection: any) {

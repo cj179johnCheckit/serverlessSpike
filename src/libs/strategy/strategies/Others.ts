@@ -1,5 +1,5 @@
 import { SingleCheck, OtherCheckTypes } from '../../interfaces';
-import  { Strategy } from '../CheckStrategy';
+import  { Strategy } from '../../strategy/CheckStrategy';
 
 export class Others implements Strategy {
   getChildren(check: SingleCheck): Array<any> {
