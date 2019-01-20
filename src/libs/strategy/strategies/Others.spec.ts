@@ -23,7 +23,9 @@ describe('Other check type strategy', () => {
       temperature: {
         followUpCheckEntityId: null,
         timeDelayedCheckEntityId: null
-      }
+      },
+      version: Date.now(),
+      customerId: 'test-customer-id'
     };
   });
 

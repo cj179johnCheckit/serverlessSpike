@@ -3,6 +3,7 @@ import { Utils } from './libs/services/utils';
 import { Bootstrap } from './libs/bootstrap';
 import { Config } from './libs/config';
 import { ImportService } from './libs/services/import';
+import { MongoService } from './libs/services/mongo';
 
 const utils = new Utils();
 const awsLib = new AWSLib(utils);
@@ -24,13 +25,14 @@ export const create = async function (event: any = {}, context: any = {}, callba
 
     const dbConnection = await bootstrap.getDBConnection(environment);
 
-    const importService = new ImportService(dbConnection);
+    const dbService = new MongoService(dbConnection);
+
+    const importService = new ImportService(dbService);
 
     // const templateMeta = await importService.findCustomerTemplate('m23xg');
 
-    const templateChecklists = await importService.findTemplateChecklists('m23xg');
+    await importService.importTemplateChecklists('m23xg');
 
-    console.log(JSON.stringify(templateChecklists));
     // const templateSchedules = await dbService.findTemplateSchedules('m23xg');
     return callback(null, templateId);
   } catch(error) {

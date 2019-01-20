@@ -2,7 +2,6 @@ import { Utils } from './utils';
 import 'mocha';
 import { assert } from 'chai';
 import { BootstrapConfig } from '../interfaces';
-import { config } from 'aws-sdk';
 
 describe('Utils service', () => {
   let utils: Utils;

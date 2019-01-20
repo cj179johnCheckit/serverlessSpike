@@ -58,4 +58,6 @@ export interface Check {
     name: string;
     type: string;
     breadcrumbs: BreadcrumbId[];
+    version: number;
+    customerId: string;
 }

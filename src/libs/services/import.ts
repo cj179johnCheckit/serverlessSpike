@@ -1,78 +1,47 @@
 import { MongoService } from './mongo';
-import { get, cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash';
 import { Check } from '../interfaces';
+import { SingleImport } from './singleImport';
 import { CheckStrategy } from '../strategy/CheckStrategy';
 
 export class ImportService {
   private service: MongoService;
+  private singleImport: SingleImport;
 
-  constructor(dbConnection: any) {
-    this.service = new MongoService(dbConnection);
+  constructor(dbService: MongoService) {
+    this.service = dbService;
+    this.singleImport = new SingleImport(dbService);
   }
 
-  async findCustomerTemplate(templateId: string): Promise<any> {
-      this.service.setCollection('customer');
-      const results = await this.service.find({ _id: templateId});
-      return get(results, '[0]', {});
-  }
-
-  async findTemplateChecklists(templateId: string, customerId: string = 'test-id'): Promise<any> {
-    console.log('STARTING');
-
-    this.service.setCollection('check');
-
-    const checksToDuplicate = await this.service.find({ customerId: templateId, isRoot: true });
+  async importTemplateChecklists(templateId: string, customerId: string = 'test-id'): Promise<any> {
+    console.log('Starting checklists import');
+    const checksToDuplicate = await this.service.find('check', { customerId: templateId, isRoot: true });
     return Promise.all(checksToDuplicate.map(async (check: Check) =>
       await this.importCheck(check, null, null)
     ));
-
-  }
-
-  async findTemplateSchedules(templateId: string): Promise<any> {
-    this.service.setCollection('schedule');
-    return await this.service.find({ customerId: templateId});
   }
 
   async importCheck(source: Check, parent: Check = null, newParent: Check = null): Promise<any> {
     console.log(source.name);
 
-    const sourceClone = cloneDeep(source);
-    const entityId = this.service.createId();
-    const version = Date.now();
-    const breadcrumbs = parent !== null ? parent.breadcrumbs : [];
-    const breadcrumbId = { name: source.name, entityId: source._id };
-
-    breadcrumbs.push(breadcrumbId);
-
-    const newCheck = Object.assign(sourceClone, {
-      _id: entityId,
-      version,
-      customerId: 'test-id',
-      breadcrumbs
-    });
+    const newCheck = this.singleImport.copyCheck(source, newParent, 'test-customer-id');
 
     const sourceStrategy = new CheckStrategy().getStrategy(source.type);
-
     const children = sourceStrategy.getChildren(source);
-
     if (newParent) {
       const parentStrategy = new CheckStrategy().getStrategy(newParent.type);
       if (parentStrategy.needsUpdateChildLink(newParent)) {
-        const updatedNewParent = parentStrategy.updateChildLink(newParent, entityId, source._id);
+        const updatedNewParent = parentStrategy.updateChildLink(newParent, newCheck._id, source._id);
       }
     }
 
     return Promise.all(children.map(async (child: any) => {
-      const childDetails = await this.service.findOne({_id: child.id});
+      const childDetails = await this.service.findOne('check', { _id: child.id });
       return await this.importCheck(childDetails, source, newCheck);
     }));
+  }
 
-    // const updatedChildren = Promise.all(children.map(async child => await this.copy(child, source)))
-
-    // update child references using updated children
-
-    // const updatedCheck: Check = null;
-
-    // return updatedCheck;
+  async importTemplateSchedules(templateId: string): Promise<any> {
+    return await this.service.find('schedule', { customerId: templateId});
   }
 }

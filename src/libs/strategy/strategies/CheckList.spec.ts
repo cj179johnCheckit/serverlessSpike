@@ -22,7 +22,9 @@ describe('Check list strategy', () => {
       type: 'checklist',
       checklist: {
         checklistItems: []
-      }
+      },
+      version: Date.now(),
+      customerId: 'test-customer-id'
     };
   });
 

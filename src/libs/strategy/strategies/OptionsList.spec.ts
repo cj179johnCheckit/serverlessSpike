@@ -22,7 +22,9 @@ describe('Option list strategy', () => {
       type: 'optionsList',
       optionsList: {
         options: []
-      }
+      },
+      version: Date.now(),
+      customerId: 'test-customer-id'
     };
   });
 

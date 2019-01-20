@@ -1,43 +1,52 @@
-import { Collection } from 'typeorm';
+import { Collection, Db } from 'typeorm';
+import { ObjectID } from 'typeorm';
 
 const mongodb = require('mongodb');
 
-export class MongoService {
-  private db: any;
-  private collection: Collection;
+export interface MongoServiceInterface {
+  findOne(collectionName: string, params: any): Promise<any>;
+  find(collectionName: string, params: any): Promise<any>;
+  updateOne(collectionName: string, params: any, newValue: any): Promise<any>;
+  insert(collectionName: string, data: Object[]): Promise<any>;
+  createId(): ObjectID;
+}
+
+export class MongoService implements MongoServiceInterface {
+  private db: Db;
 
   constructor(dbConnection: any) {
     this.db = dbConnection.db();
   }
 
-  setCollection(collectionName: string): MongoService {
-    this.collection = this.db.collection(collectionName);
-    return this;
-  }
-
-  async findOne(params: any): Promise<any> {
-    const results = await this.find(params);
+  async findOne(collectionName: string, params: any): Promise<any> {
+    const results = await this.find(collectionName, params);
     return results.length > 0 ? results.shift() : null;
   }
-  find(params: any): Promise<any> {
+
+  find(collectionName: string, params: any): Promise<any> {
+    const collection: Collection = this.db.collection(collectionName);
+
     return new Promise((resolve, reject) => {
-      this.collection.find(params).toArray((err: Error, docs: any) =>
+      collection.find(params).toArray((err: Error, docs: any) =>
         err ? reject(err) : resolve(docs)
       );
     });
   }
-  async updateOne(params: any, newValue: any): Promise<any> {
-    return await this.collection.updateOne(
+  async updateOne(collectionName: string, params: any, newValue: any): Promise<any> {
+    const collection: Collection = this.db.collection(collectionName);
+
+    return await collection.updateOne(
       params,
       { $set: newValue }
     );
   }
 
-  async insert(data: Object[]): Promise<any> {
-    return await this.collection.insertMany(data);
+  async insert(collectionName: string, data: Object[]): Promise<any> {
+    const collection: Collection = this.db.collection(collectionName);
+    return await collection.insertMany(data);
   }
 
-  createId() {
+  createId(): ObjectID {
     return new mongodb.ObjectID();
   }
 }
