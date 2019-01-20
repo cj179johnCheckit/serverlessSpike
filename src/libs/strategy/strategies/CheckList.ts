@@ -1,4 +1,4 @@
-import  { Strategy } from '../CheckStrategy';
+import  { Strategy } from '../checkStrategy';
 import { ChecklistCheck } from '../../interfaces';
 
 export class CheckList implements Strategy {

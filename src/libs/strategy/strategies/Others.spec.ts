@@ -1,4 +1,4 @@
-import { Others } from './Others';
+import { Others } from './others';
 import 'mocha';
 import { assert } from 'chai';
 import { cloneDeep } from 'lodash';

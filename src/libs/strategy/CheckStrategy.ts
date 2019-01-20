@@ -1,7 +1,6 @@
-import { CheckList } from './strategies/CheckList';
-import { Others } from  './strategies/Others';
-import { OptionsList } from './strategies/OptionsList';
-import { log } from 'util';
+import { CheckList } from './strategies/checkList';
+import { Others } from  './strategies/others';
+import { OptionsList } from './strategies/optionsList';
 
 export interface Strategy {
   getChildren: Function;

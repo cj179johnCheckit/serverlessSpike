@@ -1,6 +1,6 @@
-import { CheckStrategy } from './CheckStrategy';
+import { CheckStrategy } from './checkStrategy';
 import 'mocha';
-import { assert, expect } from 'chai';
+import { assert } from 'chai';
 
 export interface TypeMappings {
   [key: string]: string;

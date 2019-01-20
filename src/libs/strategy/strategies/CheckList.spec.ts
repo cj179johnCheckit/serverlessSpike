@@ -1,4 +1,4 @@
-import { CheckList } from './CheckList';
+import { CheckList } from './checkList';
 import 'mocha';
 import { assert } from 'chai';
 import { cloneDeep } from 'lodash';

@@ -1,7 +1,7 @@
 import { MongoService } from './mongo';
 import { get, cloneDeep } from 'lodash';
 import { Check, BreadcrumbId } from '../interfaces';
-import { CheckStrategy } from '../strategy/CheckStrategy';
+import { CheckStrategy } from '../strategy/checkStrategy';
 import { ObjectID } from 'typeorm';
 
 export class SingleImport {

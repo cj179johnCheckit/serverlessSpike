@@ -1,4 +1,4 @@
-import { OptionsList } from './OptionsList';
+import { OptionsList } from './optionsList';
 import 'mocha';
 import { assert } from 'chai';
 import { cloneDeep } from 'lodash';
