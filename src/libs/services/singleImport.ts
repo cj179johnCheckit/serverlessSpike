@@ -47,7 +47,7 @@ export class SingleImport {
       const updatedParent = parentStrategy.updateChildLink(parent, childId, sourceCheckId);
       return await this.service.updateOne('check', { _id: parent._id }, updatedParent);
     }
-    return Promise.resolve();
+    return Promise.resolve(true);
   }
 
 }

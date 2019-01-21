@@ -23,7 +23,6 @@ describe('Single check import', () => {
     };
 
     mongoService = new MongoService(dbConnectionStub);
-
     singleImport = new SingleImport(mongoService);
   });
 
@@ -102,6 +101,68 @@ describe('Single check import', () => {
   })
 
   it('should get children of a check', () => {
+    const followUpCheckEntityId = new mongo.ObjectID();
+    const timeDelayedCheckEntityId = new mongo.ObjectID();
 
+    const source = {
+      _id: new mongo.ObjectID(),
+      name: 'test-temperature-check',
+      type: 'temperature',
+      breadcrumbs: [
+        {
+          name: 'test-text-test-exsting-parent',
+          entityId: new mongo.ObjectID()
+        }
+      ],
+      temperature: {
+        followUpCheckEntityId,
+        timeDelayedCheckEntityId
+      },
+      version: Date.now(),
+      customerId: 'old-customer-id'
+    };
+
+    const results = singleImport.getCheckChildren(source);
+
+    assert.deepEqual(results, [
+      {
+        id: followUpCheckEntityId
+      },
+      {
+        id: timeDelayedCheckEntityId
+      }
+    ]);
+  });
+
+  it('should update check parent', done => {
+    const childId = new mongo.ObjectID();
+    const sourceCheckId = new mongo.ObjectID();
+    const expectedResult = 'Inserted';
+
+    const parent =  {
+      _id: new mongo.ObjectID(),
+      name: 'test-temperature-check',
+      type: 'temperature',
+      breadcrumbs: [
+        {
+          name: 'test-text-test-exsting-parent',
+          entityId: new mongo.ObjectID()
+        }
+      ],
+      temperature: {
+        followUpCheckEntityId: new mongo.ObjectID(),
+        timeDelayedCheckEntityId: new mongo.ObjectID()
+      },
+      version: Date.now(),
+      customerId: 'old-customer-id'
+    };
+
+    sinon.stub(mongoService, 'updateOne').resolves(expectedResult);
+
+    singleImport.updateCheckParent(parent, childId, sourceCheckId)
+      .then(result => {
+        assert.equal(result, expectedResult);
+        done();
+      });
   });
 });
