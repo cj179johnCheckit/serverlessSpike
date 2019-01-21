@@ -2,7 +2,7 @@ import { CheckList } from './checkList';
 import 'mocha';
 import { assert } from 'chai';
 import { cloneDeep } from 'lodash';
-import { ChecklistCheck } from '../../interfaces';
+import { ChecklistCheck } from '../../interfaces/check';
 
 const mongo = require('mongodb');
 

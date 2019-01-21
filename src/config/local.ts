@@ -1,4 +1,4 @@
-import { ConfigMapping } from '../libs/interfaces';
+import { ConfigMapping } from '../libs/interfaces/commons';
 
 export const mappings: ConfigMapping = {
   NODE_ENV: 'local',

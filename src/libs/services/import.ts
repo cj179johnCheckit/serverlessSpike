@@ -1,5 +1,5 @@
 import { MongoService } from './mongo';
-import { Check } from '../interfaces';
+import { Check } from '../interfaces/check';
 import { SingleImport } from './singleImport';
 
 export class ImportService {

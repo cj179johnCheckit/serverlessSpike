@@ -3,15 +3,7 @@ import { ObjectID } from 'typeorm';
 
 const mongodb = require('mongodb');
 
-export interface MongoServiceInterface {
-  findOne(collectionName: string, params: any): Promise<any>;
-  find(collectionName: string, params: any): Promise<any>;
-  updateOne(collectionName: string, params: any, newValue: any): Promise<any>;
-  insert(collectionName: string, data: Object[]): Promise<any>;
-  createId(): ObjectID;
-}
-
-export class MongoService implements MongoServiceInterface {
+export class MongoService {
   private db: Db;
 
   constructor(dbConnection: any) {

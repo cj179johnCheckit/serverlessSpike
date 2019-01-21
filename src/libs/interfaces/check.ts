@@ -1,33 +1,4 @@
-export interface Message {
-  Body: string,
-  ReceiptHandle: any
-};
-
-export interface MessageBody {
-  Message: string
-}
-
-export interface MessagePayload {
-  messageFilter: string,
-  customerId: string,
-  customerTemplateId: string
-}
-
-export interface ConfigMapping {
-  [key: string]: string;
-  NODE_ENV: string;
-  CHECKITDB_URI: string;
-}
-
-export interface BootstrapConfig {
-  [key: string]: any;
-};
-
-// export interface Check {
-//   // id: ObjectID;
-//   name: string;
-//   type: string;
-// }
+import { ObjectID } from 'typeorm'
 
 export interface ChecklistCheck extends Check {
   type: 'checklist';
@@ -43,10 +14,10 @@ export interface OptionsListCheck extends Check {
   }
 }
 
-import { ObjectID } from 'typeorm'
+
 export interface CheckData {
-  followUpCheckEntityId: string;
-  timeDelayedCheckEntityId: string;
+  followUpCheckEntityId: ObjectID;
+  timeDelayedCheckEntityId: ObjectID;
 }
 
 export type OtherCheckTypes = 'temperature' | 'dateEntry' | 'acknowledgement' | 'text';
@@ -76,4 +47,11 @@ export interface Check {
   breadcrumbs: BreadcrumbId[];
   version: number;
   customerId: string;
+}
+export interface CheckListItem {
+  checkEntityId: ObjectID;
+}
+
+export interface CheckChildRef {
+  id: ObjectID;
 }

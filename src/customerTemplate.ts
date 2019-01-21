@@ -24,15 +24,10 @@ export const create = async function (event: any = {}, context: any = {}, callba
     }
 
     const dbConnection = await bootstrap.getDBConnection(environment);
-
     const dbService = new MongoService(dbConnection);
-
     const importService = new ImportService(dbService);
 
-    // const templateMeta = await importService.findCustomerTemplate('m23xg');
-
     await importService.importTemplateChecklists('m23xg');
-
     // const templateSchedules = await dbService.findTemplateSchedules('m23xg');
     return callback(null, templateId);
   } catch(error) {

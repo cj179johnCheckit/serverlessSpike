@@ -1,3 +1,4 @@
+import { ObjectID } from 'typeorm';
 export interface Message {
     Body: string;
     ReceiptHandle: any;
@@ -30,7 +31,6 @@ export interface OptionsListCheck extends Check {
         options: any[];
     };
 }
-import { ObjectID } from 'typeorm';
 export interface CheckData {
     followUpCheckEntityId: string;
     timeDelayedCheckEntityId: string;
@@ -60,4 +60,10 @@ export interface Check {
     breadcrumbs: BreadcrumbId[];
     version: number;
     customerId: string;
+}
+export interface CheckListItem {
+    checkEntityId: ObjectID;
+}
+export interface CheckChildRef {
+    id: ObjectID;
 }

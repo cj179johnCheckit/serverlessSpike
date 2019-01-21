@@ -3,7 +3,7 @@ import 'mocha';
 import { assert } from 'chai';
 // import * as sinon from 'sinon';
 import * as Sinon from 'ts-sinon';
-import { MongoService, MongoServiceInterface } from './mongo';
+import { MongoService } from './mongo';
 
 const mongo = require('mongodb');
 const sinon = Sinon.default;

@@ -1,7 +1,7 @@
 import { bootstrap } from '@checkit/checkit-application-bootstrapper';
 import { ConfigMapping as BootstrapConfigMapping } from '@checkit/checkit-application-bootstrapper';
 import { Connection } from 'typeorm';
-import { BootstrapConfig } from './interfaces';
+import { BootstrapConfig } from './interfaces/commons';
 
 const MongoClient = require('mongodb').MongoClient;
 const applicationName = 'customer-template-lambda';

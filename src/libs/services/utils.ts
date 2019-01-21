@@ -1,4 +1,4 @@
-import { BootstrapConfig } from '../../libs/interfaces';
+import { BootstrapConfig } from '../interfaces/commons';
 
 export class Utils {
   validateMessage(message: any = {}): boolean {

@@ -1,4 +1,4 @@
-import { MessagePayload } from './interfaces';
+import { MessagePayload } from './interfaces/commons';
 export declare class AWSLib {
     private sqs;
     private utils;

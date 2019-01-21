@@ -2,7 +2,7 @@ import { Others } from './others';
 import 'mocha';
 import { assert } from 'chai';
 import { cloneDeep } from 'lodash';
-import { SingleCheck } from '../../interfaces';
+import { SingleCheck } from '../../interfaces/check';
 
 const mongo = require('mongodb');
 

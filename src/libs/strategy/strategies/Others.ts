@@ -1,9 +1,22 @@
-import { SingleCheck } from '../../interfaces';
+import { SingleCheck, CheckChildRef } from '../../interfaces/check';
 import  { Strategy } from '../checkStrategy';
+import { ObjectID } from 'typeorm';
+
+interface ChildFieldEntity {
+  folllwCheckEntityId: ObjectID;
+  timeDelayedCheckEntityId: ObjectID;
+}
+
+interface ChildField {
+  temperature? : ChildFieldEntity;
+  text? : ChildFieldEntity;
+  acknowledgement? : ChildFieldEntity;
+  dateEntry? : ChildFieldEntity;
+}
 
 export class Others implements Strategy {
-  getChildren(check: SingleCheck): Array<any> {
-    const children: Array<any> = [];
+  getChildren(check: SingleCheck): Array<CheckChildRef> {
+    const children: Array<CheckChildRef> = [];
     const childProperty = check[check.type];
     if(childProperty.followUpCheckEntityId) {
       children.push({
@@ -24,7 +37,7 @@ export class Others implements Strategy {
       || childLinksField.timeDelayedCheckEntityId !== null;
   }
 
-  updateChildLink(parent: SingleCheck, newChildId: string, existingChildId: string): SingleCheck {
+  updateChildLink(parent: SingleCheck, newChildId: ObjectID, existingChildId: ObjectID): SingleCheck {
     const childField = parent[parent.type];
     if (childField.followUpCheckEntityId === existingChildId) {
       childField.followUpCheckEntityId = newChildId;

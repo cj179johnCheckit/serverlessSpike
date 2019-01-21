@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { config, SQS } from 'aws-sdk';
-import { MessageBody, MessagePayload } from './interfaces';
+import { MessageBody, MessagePayload } from './interfaces/commons';
 
 config.update({region: 'eu-west-1'});
 

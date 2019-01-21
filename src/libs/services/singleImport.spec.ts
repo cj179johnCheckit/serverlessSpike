@@ -1,10 +1,9 @@
 import { SingleImport } from './SingleImport';
 import 'mocha';
 import { assert } from 'chai';
-import { get, cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash';
 import * as Sinon from 'ts-sinon';
-import { MongoService, MongoServiceInterface } from './mongo';
-import { BreadcrumbId } from '../interfaces';
+import { MongoService } from './mongo';
 
 const mongo = require('mongodb');
 const sinon = Sinon.default;
@@ -101,4 +100,8 @@ describe('Single check import', () => {
     assert.equal(result.customerId, newCustomerId);
     assert.deepEqual(result.breadcrumbs, []);
   })
+
+  it('should get children of a check', () => {
+
+  });
 });

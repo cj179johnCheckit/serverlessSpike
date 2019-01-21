@@ -2,7 +2,7 @@ import { OptionsList } from './optionsList';
 import 'mocha';
 import { assert } from 'chai';
 import { cloneDeep } from 'lodash';
-import { OptionsListCheck } from '../../interfaces';
+import { OptionsListCheck } from '../../interfaces/check';
 
 const mongo = require('mongodb');
 
