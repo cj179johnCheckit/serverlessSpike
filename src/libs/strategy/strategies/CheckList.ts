@@ -15,7 +15,7 @@ export class CheckList implements Strategy {
 
   updateChildLink(parent: ChecklistCheck, newChildId: ObjectID, existingChildId: ObjectID): ChecklistCheck {
     parent.checklist.checklistItems = parent.checklist.checklistItems.map((item: CheckListItem) => {
-      if(item.checkEntityId === existingChildId) {
+      if(item.checkEntityId && item.checkEntityId.equals(existingChildId)) {
         item.checkEntityId = newChildId;
       }
       return item;

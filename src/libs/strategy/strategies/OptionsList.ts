@@ -26,12 +26,17 @@ export class OptionsList implements Strategy {
 
   updateChildLink(parent: OptionsListCheck, newChildId: ObjectID, existingChildId: ObjectID): OptionsListCheck {
     parent.optionsList.options = parent.optionsList.options.map((option: CheckOptionsListOption) => {
-      if (option.followUpCheckEntityId === existingChildId) {
+
+      const followUpId = option.followUpCheckEntityId || null;
+      const timeDelayedId = option.timeDelayedCheckEntityId || null;
+
+      if (followUpId && followUpId.equals(existingChildId)) {
         option.followUpCheckEntityId = newChildId;
       }
-      if (option.timeDelayedCheckEntityId === existingChildId) {
+      if (timeDelayedId && timeDelayedId.equals(existingChildId)) {
         option.timeDelayedCheckEntityId = newChildId;
       }
+
       return option;
     });
     return parent;

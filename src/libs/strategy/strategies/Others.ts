@@ -27,12 +27,16 @@ export class Others implements Strategy {
 
   updateChildLink(parent: SingleCheck, newChildId: ObjectID, existingChildId: ObjectID): SingleCheck {
     const childField = parent[parent.type];
-    if (childField.followUpCheckEntityId === existingChildId) {
+    const followUpId = childField.followUpCheckEntityId || null;
+    const timeDelayedId = childField.timeDelayedCheckEntityId || null;
+
+    if (followUpId && followUpId.equals(existingChildId)) {
       childField.followUpCheckEntityId = newChildId;
     }
-    if (childField.timeDelayedCheckEntityId === existingChildId) {
+    if (timeDelayedId && timeDelayedId.equals(existingChildId)) {
       childField.timeDelayedCheckEntityId = newChildId;
     }
+
     parent[parent.type] = childField;
     return parent;
   }
