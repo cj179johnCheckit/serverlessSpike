@@ -10,7 +10,7 @@ export class MongoService {
     this.db = dbConnection.db();
   }
 
-  async findOne(collectionName: string, params: any): Promise<any> {
+  async findOne(collectionName: string, params: {}): Promise<any> {
     const results = await this.find(collectionName, params);
     return results.length > 0 ? results.shift() : null;
   }
