@@ -1,6 +1,7 @@
 import { MongoService } from './mongo';
 import { Check } from '../interfaces/check';
 import { SingleImport } from './singleImport';
+import { Schedule } from '../interfaces/schedule';
 
 export class ImportService {
   private service: MongoService;
@@ -46,6 +47,11 @@ export class ImportService {
   }
 
   async importTemplateSchedules(templateId: string): Promise<any> {
-    return await this.service.find('schedule', { customerId: templateId});
+    const schedules = await this.service.find('schedule', { customerId: templateId});
+    return Promise.all(schedules.map(async(schedule: Schedule) => {
+      const scheduleCopy = this.singleImport.copySchedule(schedule, this.customerId);
+      return await this.service.insert('schedule', [scheduleCopy]);
+    }));
+
   }
 }

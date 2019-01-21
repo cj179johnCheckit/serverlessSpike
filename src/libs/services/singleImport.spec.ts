@@ -4,9 +4,11 @@ import { assert } from 'chai';
 import { cloneDeep } from 'lodash';
 import * as Sinon from 'ts-sinon';
 import { MongoService } from './mongo';
+import { Schedule } from '../interfaces/schedule';
 
 const mongo = require('mongodb');
 const sinon = Sinon.default;
+const newCustomerId = 'test-customer-id';
 
 describe('Single check import', () => {
 
@@ -72,8 +74,6 @@ describe('Single check import', () => {
   });
 
   it('should copy root check', () => {
-    const newCustomerId = 'test-customer-id';
-
     const fixture = {
       _id: new mongo.ObjectID(),
       name: 'test-temperature-check',
@@ -134,7 +134,7 @@ describe('Single check import', () => {
     ]);
   });
 
-  it('should update check parent', done => {
+  it('should update check parent', async() => {
     const childId = new mongo.ObjectID();
     const sourceCheckId = new mongo.ObjectID();
     const expectedResult = 'Inserted';
@@ -157,12 +157,38 @@ describe('Single check import', () => {
       customerId: 'old-customer-id'
     };
 
-    sinon.stub(mongoService, 'updateOne').resolves(expectedResult);
+    sandbox.stub(mongoService, 'updateOne').resolves(expectedResult);
 
-    singleImport.updateCheckParent(parent, childId, sourceCheckId)
-      .then(result => {
-        assert.equal(result, expectedResult);
-        done();
-      });
+    const result = await singleImport.updateCheckParent(parent, childId, sourceCheckId);
+    assert.equal(result, expectedResult);
+  });
+
+  it('should copy schedule', () => {
+    const newScheduleId = new mongo.ObjectID();
+    const source: Schedule = {
+      _id: new mongo.ObjectID(),
+      name: 'test-schedule',
+      dateFrequency: {
+        weekly: {
+          monday: true,
+          tuesday: true,
+          wednesday: true,
+          thurseday: true,
+          friday: true,
+          saturday: true,
+          sunday: true
+        }
+      },
+      timeFrequency: {
+        times: [0]
+      },
+      _version: 1544538580302,
+      customerId: 'm23xg'
+    };
+
+    sandbox.stub(mongoService, 'createId').returns(newScheduleId);
+    const result = singleImport.copySchedule(source, newCustomerId);
+    assert.equal(result.customerId, newCustomerId);
+    assert.isTrue(result._id.equals(newScheduleId));
   });
 });

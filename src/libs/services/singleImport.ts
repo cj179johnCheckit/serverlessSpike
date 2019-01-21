@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash';
 import { BreadcrumbId, Check } from '../interfaces/check';
 import { CheckStrategy } from '../strategy/checkStrategy';
 import { ObjectID } from 'typeorm';
+import { Schedule } from '../interfaces/schedule';
 
 export class SingleImport {
   private service: MongoService;
@@ -50,4 +51,11 @@ export class SingleImport {
     return Promise.resolve(true);
   }
 
+  copySchedule(source: Schedule, customerId: string): Schedule {
+    const sourceClone = cloneDeep(source);
+    sourceClone._version = Date.now();
+    sourceClone.customerId = customerId;
+    sourceClone._id = this.service.createId();
+    return sourceClone;
+  }
 }

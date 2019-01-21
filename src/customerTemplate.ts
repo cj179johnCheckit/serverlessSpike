@@ -28,7 +28,8 @@ export const create = async function (event: any = {}, context: any = {}, callba
     const importService = new ImportService(dbService, customerId);
 
     await importService.importTemplateChecklists(templateId);
-    //await dbService.importTemplateSchedules(templateId);
+    await importService.importTemplateSchedules(templateId);
+
     return callback(null, templateId);
   } catch(error) {
     return callback(error);

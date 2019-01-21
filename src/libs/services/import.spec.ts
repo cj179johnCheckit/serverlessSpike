@@ -13,7 +13,7 @@ const sinon = Sinon.default;
 
 describe('Import template service', () => {
 
-  const customerId = 'test-customer-id';
+  const newCustomerId = 'test-customer-id';
   let importService: ImportService;
   let dbConnectionStub: {};
   let sandbox: Sinon.default.SinonSandbox;
@@ -26,12 +26,12 @@ describe('Import template service', () => {
         db: sandbox.stub()
       };
       mongoServiceStub = new MongoService(dbConnectionStub);
-      importService = new ImportService(mongoServiceStub, customerId);
+      importService = new ImportService(mongoServiceStub, newCustomerId);
     });
 
     afterEach(() => sandbox.restore());
 
-    it('should import template check lists', (done) => {
+    it('should import check lists of a template', async() => {
       sandbox.stub(mongoServiceStub, 'find').resolves(
         [
           { type: 'temperature' },
@@ -42,12 +42,38 @@ describe('Import template service', () => {
       sandbox.stub(importService, 'importCheck').returns({});
 
       const testTemplateId = new mongo.ObjectID();
-      const resultPromise = importService.importTemplateChecklists(testTemplateId);
+      const results = await importService.importTemplateChecklists(testTemplateId);
 
-      resultPromise.then((results) => {
-        assert.equal(3, results.length); //importCheck called 3 times
-        done();
-      });
+      assert.equal(3, results.length); //importCheck called 3 times
+    });
+
+    it('should import schedules of a template', async() => {
+      sandbox.stub(mongoServiceStub, 'find').resolves([
+        {
+          _id: new mongo.ObjectID(),
+          name: 'test-schedule',
+          dateFrequency: {
+            weekly: {
+              monday: true,
+              tuesday: true,
+              wednesday: true,
+              thurseday: true,
+              friday: true,
+              saturday: true,
+              sunday: true
+            }
+          },
+          timeFrequency: {
+            times: [0]
+          },
+          _version: 1544538580302,
+          customerId: 'm23xg'
+        }
+      ]);
+
+      const insertStub = sandbox.stub(mongoServiceStub, 'insert');
+      await importService.importTemplateSchedules('m23xg');
+      assert.equal(insertStub.getCall(0).args[1][0].customerId, newCustomerId);
     });
   });
 
@@ -91,19 +117,19 @@ describe('Import template service', () => {
       const checkClone = cloneDeep(check);
       checkClone._id = new mongo.ObjectID();
       checkClone.version = 1548079270464;
-      checkClone.customerId = customerId;
+      checkClone.customerId = newCustomerId;
 
       const childCheckClone = cloneDeep(childCheck);
       childCheckClone._id = new mongo.ObjectID();
       childCheckClone.version = 1548079270480;
-      childCheckClone.customerId = customerId;
+      childCheckClone.customerId = newCustomerId;
 
-      const copyCheckStub = sinon.stub(SingleImport.prototype, 'copyCheck');
+      const copyCheckStub = sandbox.stub(SingleImport.prototype, 'copyCheck');
 
       copyCheckStub.onCall(0).returns(checkClone);
       copyCheckStub.onCall(1).returns(childCheckClone);
 
-      const updateStub = sinon.stub(SingleImport.prototype, 'updateCheckParent').resolves(true);
+      const updateStub = sandbox.stub(SingleImport.prototype, 'updateCheckParent').resolves(true);
 
       const ImportServiceMock = proxyquire('../services/import', {
         'SingleImport': SingleImport
@@ -111,8 +137,8 @@ describe('Import template service', () => {
 
       importService = new ImportServiceMock.ImportService(mongoServiceStub);
 
-      const findOneStub = sinon.stub(mongoServiceStub, 'findOne').resolves(childCheck);
-      const insertStub = sinon.stub(mongoServiceStub, 'insert').resolves(true);
+      const findOneStub = sandbox.stub(mongoServiceStub, 'findOne').resolves(childCheck);
+      const insertStub = sandbox.stub(mongoServiceStub, 'insert').resolves(true);
 
       await importService.importCheck(check, null);
 
