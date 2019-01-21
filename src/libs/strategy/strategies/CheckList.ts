@@ -1,10 +1,6 @@
 import  { Strategy } from '../checkStrategy';
-import { ChecklistCheck, CheckChildRef } from '../../interfaces/check';
+import { ChecklistCheck, CheckChildRef, CheckListItem } from '../../interfaces/check';
 import { ObjectID } from 'typeorm';
-
-interface CheckListItem {
-  checkEntityId: ObjectID;
-}
 
 export class CheckList implements Strategy {
   getChildren(check: ChecklistCheck): Array<CheckChildRef> {

@@ -3,21 +3,20 @@ import { ObjectID } from 'typeorm'
 export interface ChecklistCheck extends Check {
   type: 'checklist';
   checklist: {
-    checklistItems: any[];
+    checklistItems: CheckListItem[];
   }
 }
 
 export interface OptionsListCheck extends Check {
   type: 'optionsList';
   optionsList: {
-    options: any[];
+    options: CheckOptionsListOption[];
   }
 }
 
-
 export interface CheckData {
-  followUpCheckEntityId: ObjectID;
-  timeDelayedCheckEntityId: ObjectID;
+  followUpCheckEntityId: ObjectID | null;
+  timeDelayedCheckEntityId: ObjectID | null;
 }
 
 export type OtherCheckTypes = 'temperature' | 'dateEntry' | 'acknowledgement' | 'text';
@@ -30,12 +29,6 @@ export interface SingleCheck extends Check {
   text?: CheckData;
 }
 
-export interface ChecklistCheck extends Check {
-  type: 'checklist';
-  checklist: {
-    checklistItems: any[];
-  }
-}
 export interface BreadcrumbId {
   name: string,
   entityId: ObjectID
@@ -54,4 +47,9 @@ export interface CheckListItem {
 
 export interface CheckChildRef {
   id: ObjectID;
+}
+
+export interface CheckOptionsListOption {
+  followUpCheckEntityId?: ObjectID | null;
+  timeDelayedCheckEntityId?: ObjectID | null;
 }

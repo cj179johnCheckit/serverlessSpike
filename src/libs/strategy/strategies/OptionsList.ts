@@ -1,16 +1,11 @@
 import  { Strategy } from '../checkStrategy';
-import { OptionsListCheck, CheckChildRef } from '../../interfaces/check';
+import { OptionsListCheck, CheckChildRef, CheckOptionsListOption } from '../../interfaces/check';
 import { ObjectID } from 'typeorm';
-
-interface Option {
-  followUpCheckEntityId?: ObjectID;
-  timeDelayedCheckEntityId?: ObjectID;
-}
 
 export class OptionsList implements Strategy {
   getChildren(check: OptionsListCheck): Array<CheckChildRef> {
     const children: Array<CheckChildRef> = [];
-    check.optionsList.options.forEach((option: Option) => {
+    check.optionsList.options.forEach((option: CheckOptionsListOption) => {
       if (option.followUpCheckEntityId) {
         children.push({
           id: option.followUpCheckEntityId
@@ -30,7 +25,7 @@ export class OptionsList implements Strategy {
   }
 
   updateChildLink(parent: OptionsListCheck, newChildId: ObjectID, existingChildId: ObjectID): OptionsListCheck {
-    parent.optionsList.options = parent.optionsList.options.map((option: Option) => {
+    parent.optionsList.options = parent.optionsList.options.map((option: CheckOptionsListOption) => {
       if (option.followUpCheckEntityId === existingChildId) {
         option.followUpCheckEntityId = newChildId;
       }

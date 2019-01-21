@@ -5,25 +5,27 @@ import { SingleImport } from './singleImport';
 export class ImportService {
   private service: MongoService;
   private singleImport: SingleImport;
+  private customerId: string;
 
-  constructor(dbService: MongoService) {
+  constructor(dbService: MongoService, customerId: string) {
     this.service = dbService;
     this.singleImport = new SingleImport(dbService);
+    this.customerId = customerId;
   }
 
-  async importTemplateChecklists(templateId: string, customerId: string = 'test-id'): Promise<any> {
+  async importTemplateChecklists(templateId: string): Promise<any> {
     console.log('Starting checklists import');
     const checksToDuplicate = await this.service.find('check', { customerId: templateId, isRoot: true });
     return Promise.all(checksToDuplicate.map(async (check: Check) =>
-      await this.importCheck(check, null, null)
+      await this.importCheck(check, null)
     ));
   }
 
-  async importCheck(source: Check, parent: Check = null, newParent: Check = null): Promise<any> {
+  async importCheck(source: Check, newParent: Check = null): Promise<any> {
     console.log(source.name);
     const promises = [];
 
-    const newCheck = this.singleImport.copyCheck(source, newParent, 'test-customer-id');
+    const newCheck = this.singleImport.copyCheck(source, newParent, this.customerId);
     const children = this.singleImport.getCheckChildren(source);
 
     if (newParent) {
@@ -33,7 +35,7 @@ export class ImportService {
 
     const childrenSearchPromises = children.map(async (child: any) => {
       const childDetails = await this.service.findOne('check', { _id: child.id });
-      return await this.importCheck(childDetails, source, newCheck);
+      return await this.importCheck(childDetails, newCheck);
     });
 
     const saveNewCheckPromise = await this.service.insert('check', [newCheck]);

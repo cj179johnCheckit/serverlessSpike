@@ -2,18 +2,6 @@ import { SingleCheck, CheckChildRef } from '../../interfaces/check';
 import  { Strategy } from '../checkStrategy';
 import { ObjectID } from 'typeorm';
 
-interface ChildFieldEntity {
-  folllwCheckEntityId: ObjectID;
-  timeDelayedCheckEntityId: ObjectID;
-}
-
-interface ChildField {
-  temperature? : ChildFieldEntity;
-  text? : ChildFieldEntity;
-  acknowledgement? : ChildFieldEntity;
-  dateEntry? : ChildFieldEntity;
-}
-
 export class Others implements Strategy {
   getChildren(check: SingleCheck): Array<CheckChildRef> {
     const children: Array<CheckChildRef> = [];
