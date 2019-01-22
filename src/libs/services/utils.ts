@@ -6,7 +6,7 @@ export class Utils {
       key => Object.keys(message).indexOf(key) > -1);
   }
 
-  getEnvVarsFromConfigs(name: string, configs: BootstrapConfig []) {
+  getEnvVarsFromConfig(name: string, configs: BootstrapConfig []) {
     return configs.find(config => config.Name === name).Value;
   }
 }

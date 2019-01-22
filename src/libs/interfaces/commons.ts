@@ -1,12 +1,15 @@
 export interface Message {
-  Body: string,
-  ReceiptHandle: any
+  Body: string;
+  ReceiptHandle: any;
 };
 
 export interface MessageBody {
-  Message: string
+  Message: string;
 }
 
+export interface MessageReponse {
+  Messages: Message [];
+}
 export interface MessagePayload {
   messageFilter: string,
   customerId: string,

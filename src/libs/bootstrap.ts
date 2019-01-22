@@ -1,5 +1,4 @@
-import { bootstrap } from '@checkit/checkit-application-bootstrapper';
-import { ConfigMapping as BootstrapConfigMapping } from '@checkit/checkit-application-bootstrapper';
+import { bootstrap, ConfigMapping as BootstrapConfigMapping } from '@checkit/checkit-application-bootstrapper';
 import { Connection } from 'typeorm';
 import { BootstrapConfig } from './interfaces/commons';
 
@@ -28,7 +27,7 @@ export class Bootstrap {
     const configMapping = this.getConfigMapping(environmentName);
     const configs: BootstrapConfig[] = await bootstrap(configMapping);
 
-    const mongoURI = this.utils.getEnvVarsFromConfigs('CHECKITDB_URI', configs);
+    const mongoURI = this.utils.getEnvVarsFromConfig('CHECKITDB_URI', configs);
 
     if (!this.connection) {
       this.connection = await MongoClient.connect(mongoURI);

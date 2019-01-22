@@ -23,7 +23,8 @@ export class ImportService {
   }
 
   async importCheck(source: Check, newParent: Check = null): Promise<any> {
-    console.log(source.name);
+    console.log(`Importing : ${source.name}`);
+
     const promises = [];
 
     const newCheck = this.singleImport.copyCheck(source, newParent, this.customerId);

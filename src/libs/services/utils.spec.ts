@@ -31,7 +31,7 @@ describe('Utils service', () => {
       }
     ];
 
-    const result = utils.getEnvVarsFromConfigs('CHECKITDB_URI', configs);
+    const result = utils.getEnvVarsFromConfig('CHECKITDB_URI', configs);
     assert.equal('mongo://localhost:27017/checkit', result);
   });
 });

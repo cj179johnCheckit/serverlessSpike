@@ -1,7 +1,6 @@
 import { MongoService } from './mongo';
 import 'mocha';
 import { assert } from 'chai';
-import { cloneDeep } from 'lodash';
 import * as Sinon from 'ts-sinon';
 import { Check, BreadcrumbId } from '../interfaces/check';
 
